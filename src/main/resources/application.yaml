@@ -1,0 +1,14 @@
+#spring.application.name=ecommerce-backend
+
+spring:
+  application:
+    name: ecommerce-backend
+
+management:
+  endpoints:
+    jmx:
+      exposure:
+        include: "*"
+
+
+

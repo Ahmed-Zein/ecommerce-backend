@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres
+    container_name: "postgres-1"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - DB:/home/ava/Development/postgres/postgres-1
+volumes:
+  DB:
+    external: true
