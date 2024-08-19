@@ -3,6 +3,13 @@
 spring:
   application:
     name: ecommerce-backend
+  datasource:
+    username: postgres
+    password: password
+    url: "jdbc:postgresql://localhost:5432/ecommerce"
+  jpa:
+    hibernate:
+      ddl-auto: update
 
 management:
   endpoints:
