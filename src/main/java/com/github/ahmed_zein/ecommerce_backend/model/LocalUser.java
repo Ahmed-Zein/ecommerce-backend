@@ -87,4 +87,16 @@ public class LocalUser {
         this.id = id;
     }
 
+    @Override
+    public String toString() {
+        return "LocalUser{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", addresses=" + addresses +
+                '}';
+    }
 }
