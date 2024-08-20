@@ -26,7 +26,7 @@ public class RegistrationBody {
 
     @NotNull
     @NotBlank
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "Minimum six characters, at least one letter and one number")
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$", message = "Minimum six characters, at least one letter and one number")
     @Size(min = 6, max = 32, message = "should be between 6 and 32")
     private String password;
 

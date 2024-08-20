@@ -21,5 +21,12 @@ management:
       exposure:
         include: "*"
 
+encryption:
+  salt:
+    rounds: 10
 
-
+jwt:
+  algorithm:
+    key: "greybeast declares this secure"
+  issuer: "greybeast"
+  expiryInSeconds: 60
