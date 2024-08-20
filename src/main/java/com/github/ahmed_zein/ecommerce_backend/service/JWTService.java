@@ -20,7 +20,8 @@ public class JWTService {
     private int expiry;
 
     private Algorithm algorithm;
-    private final String username_key = "USERNAME";
+    private static final String USERNAME_KEY = "USERNAME";
+
 
     @PostConstruct
     public void postConstruct() {
@@ -29,9 +30,13 @@ public class JWTService {
 
     public String generateJWT(LocalUser user) {
         return JWT.create()
-                .withClaim(username_key, user.getFirstName())
+                .withClaim(USERNAME_KEY, user.getUsername())
                 .withIssuer(issuer)
                 .withExpiresAt(new Date(System.currentTimeMillis() + expiry * 1000L))
                 .sign(algorithm);
+    }
+
+    public String getUsername(String token) {
+        return JWT.decode(token).getClaim(USERNAME_KEY).asString();
     }
 }
