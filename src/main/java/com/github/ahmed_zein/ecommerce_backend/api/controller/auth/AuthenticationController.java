@@ -1,4 +1,4 @@
-package com.github.ahmed_zein.ecommerce_backend.api.controller;
+package com.github.ahmed_zein.ecommerce_backend.api.controller.auth;
 
 import com.github.ahmed_zein.ecommerce_backend.api.model.LoginBody;
 import com.github.ahmed_zein.ecommerce_backend.api.model.LoginResponse;

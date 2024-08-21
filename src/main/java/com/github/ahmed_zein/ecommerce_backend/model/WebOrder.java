@@ -14,7 +14,7 @@ public class WebOrder {
     private Long id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    @JoinColumn(name = "user_id", nullable = false)
     private LocalUser user;
 
     @ManyToOne(optional = false)
