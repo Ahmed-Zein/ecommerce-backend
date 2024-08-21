@@ -5,9 +5,18 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_PASSWORD=password
+      POSTGRES_DB: ecommerce
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
     volumes:
-      - DB:/home/ava/Development/postgres/postgres-1
+      - DB:/var/lib/postgresql/data
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pg-admin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: greybeast@popos.com
+      PGADMIN_DEFAULT_PASSWORD: 123
+    ports:
+      - "5050:80"
 volumes:
   DB:
-    external: true
