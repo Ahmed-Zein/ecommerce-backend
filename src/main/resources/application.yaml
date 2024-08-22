@@ -3,6 +3,9 @@
 spring:
   application:
     name: ecommerce-backend
+  mail:
+    host: localhost
+    port: 2525
   datasource:
     username: postgres
     password: password
@@ -30,3 +33,9 @@ jwt:
     key: "greybeast declares this secure"
   issuer: "greybeast"
   expiryInSeconds: 600
+
+app:
+  frontend-url: ""
+
+mail-server:
+  from: greybeast@spring.com

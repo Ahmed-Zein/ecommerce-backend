@@ -26,6 +26,7 @@ public class WebSecurityConfig {
                                 "/products",
                                 "/auth/login",
                                 "/auth/register",
+                                "/auth/verify",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/swagger-resources/**",
