@@ -1,31 +1,13 @@
 package com.github.ahmed_zein.ecommerce_backend.api.model;
 
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
 public class LoginResponse {
     private String jwt;
     private boolean success;
     private String failureReason;
 
-    public String getJwt() {
-        return jwt;
-    }
-
-    public void setJwt(String jwt) {
-        this.jwt = jwt;
-    }
-
-    public String getFailureReason() {
-        return failureReason;
-    }
-
-    public void setFailureReason(String failureReason) {
-        this.failureReason = failureReason;
-    }
-
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
 }

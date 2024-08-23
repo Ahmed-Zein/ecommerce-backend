@@ -1,15 +1,5 @@
 package com.github.ahmed_zein.ecommerce_backend.api.controller.auth;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.github.ahmed_zein.ecommerce_backend.api.model.LoginBody;
 import com.github.ahmed_zein.ecommerce_backend.api.model.LoginResponse;
 import com.github.ahmed_zein.ecommerce_backend.api.model.RegistrationBody;
@@ -18,8 +8,11 @@ import com.github.ahmed_zein.ecommerce_backend.exception.UserAlreadyExistsExcept
 import com.github.ahmed_zein.ecommerce_backend.exception.UserNotVerifiedException;
 import com.github.ahmed_zein.ecommerce_backend.model.LocalUser;
 import com.github.ahmed_zein.ecommerce_backend.service.UserService;
-
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -44,23 +37,23 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginBody loginBody) {
-        LoginResponse response = new LoginResponse();
+        var response = LoginResponse.builder();
         try {
             String jwt = userService.loginUser(loginBody);
             if (jwt == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
-            response.setJwt(jwt);
-            response.setSuccess(true);
-            return ResponseEntity.ok(response);
+            response.jwt(jwt);
+            response.success(true);
+            return ResponseEntity.ok(response.build());
         } catch (UserNotVerifiedException e) {
             String failureReason = "USER_IS_UNVERIFIED";
             if (e.isNewEmailSent()) {
                 failureReason += "_NEW_EMAIL_SENT";
             }
-            response.setFailureReason(failureReason);
-            response.setSuccess(false);
-            return ResponseEntity.ok(response);
+            response.failureReason(failureReason);
+            response.success(false);
+            return ResponseEntity.ok(response.build());
         } catch (EmailFailureException e) {
             System.err.println("email exception");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

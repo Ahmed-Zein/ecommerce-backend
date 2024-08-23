@@ -40,12 +40,13 @@ public class UserServiceTest {
     @Test
     @Transactional
     public void testRegisterUser() throws MessagingException {
-        RegistrationBody body = new RegistrationBody();
-        body.setUserName("UserA");
-        body.setEmail("UserServiceTest$testRegisterUser@junit.com");
-        body.setFirstName("FirstName");
-        body.setLastName("LastName");
-        body.setPassword("MySecretPassword123");
+        RegistrationBody body = RegistrationBody.builder()
+                .userName("UserA")
+                .email("UserServiceTest$testRegisterUser@junit.com")
+                .firstName("FirstName")
+                .lastName("LastName")
+                .password("MySecretPassword123")
+                .build();
 
         assertThrows(UserAlreadyExistsException.class,
                 () -> userService.registerUser(body), "Username should already be in use.");
@@ -67,9 +68,10 @@ public class UserServiceTest {
     @Test
     @Transactional
     public void testLoginUser() throws UserNotVerifiedException, EmailFailureException {
-        LoginBody body = new LoginBody();
-        body.setUsername("UserA-NotExist");
-        body.setPassword("passwordA123-wrongPassword");
+        LoginBody body = LoginBody.builder()
+                .username("UserA-NotExist")
+                .password("passwordA123-wrongPassword")
+                .build();
 
         assertNull(userService.loginUser(body), "Username shouldn't be found");
 
@@ -102,9 +104,10 @@ public class UserServiceTest {
     public void testVerifyUser() throws UserNotVerifiedException, EmailFailureException {
         assertFalse(userService.verifyUser("BAD_TOKEN"), "Token should not exist");
 
-        LoginBody body = new LoginBody();
-        body.setUsername("UserB");
-        body.setPassword("passwordB123");
+        LoginBody body = LoginBody.builder()
+                .username("UserB")
+                .password("passwordB123")
+                .build();
 
         try {
             userService.loginUser(body);

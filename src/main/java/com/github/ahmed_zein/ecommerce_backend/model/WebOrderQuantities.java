@@ -2,7 +2,11 @@ package com.github.ahmed_zein.ecommerce_backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "web_order_quantities")
 public class WebOrderQuantities {
@@ -21,37 +25,4 @@ public class WebOrderQuantities {
     @ManyToOne
     @JoinColumn(name = "order_id")
     private WebOrder order;
-
-    public WebOrder getOrder() {
-        return order;
-    }
-
-    public void setOrder(WebOrder order) {
-        this.order = order;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
 }
