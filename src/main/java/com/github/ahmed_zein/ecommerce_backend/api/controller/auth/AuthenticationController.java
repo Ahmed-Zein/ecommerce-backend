@@ -14,7 +14,7 @@ import com.github.ahmed_zein.ecommerce_backend.api.model.LoginBody;
 import com.github.ahmed_zein.ecommerce_backend.api.model.LoginResponse;
 import com.github.ahmed_zein.ecommerce_backend.api.model.RegistrationBody;
 import com.github.ahmed_zein.ecommerce_backend.exception.EmailFailureException;
-import com.github.ahmed_zein.ecommerce_backend.exception.UserAlreadyExists;
+import com.github.ahmed_zein.ecommerce_backend.exception.UserAlreadyExistsException;
 import com.github.ahmed_zein.ecommerce_backend.exception.UserNotVerifiedException;
 import com.github.ahmed_zein.ecommerce_backend.model.LocalUser;
 import com.github.ahmed_zein.ecommerce_backend.service.UserService;
@@ -35,7 +35,7 @@ public class AuthenticationController {
         try {
             userService.registerUser(registrationBody);
             return ResponseEntity.ok().build();
-        } catch (UserAlreadyExists e) {
+        } catch (UserAlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (EmailFailureException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -69,7 +69,7 @@ public class AuthenticationController {
 
     @GetMapping("/verify")
     public ResponseEntity<Void> verify(@RequestParam String token) {
-        if (userService.verifyEmail(token)) {
+        if (userService.verifyUser(token)) {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).build();

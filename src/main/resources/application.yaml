@@ -1,5 +1,3 @@
-#spring.application.name=ecommerce-backend
-
 spring:
   application:
     name: ecommerce-backend
@@ -35,7 +33,7 @@ jwt:
   expiryInSeconds: 600
 
 app:
-  frontend-url: ""
+  frontend-url: "localhost:8000"
 
 mail-server:
   from: greybeast@spring.com

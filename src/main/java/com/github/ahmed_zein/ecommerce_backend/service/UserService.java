@@ -3,7 +3,7 @@ package com.github.ahmed_zein.ecommerce_backend.service;
 import com.github.ahmed_zein.ecommerce_backend.api.model.LoginBody;
 import com.github.ahmed_zein.ecommerce_backend.api.model.RegistrationBody;
 import com.github.ahmed_zein.ecommerce_backend.exception.EmailFailureException;
-import com.github.ahmed_zein.ecommerce_backend.exception.UserAlreadyExists;
+import com.github.ahmed_zein.ecommerce_backend.exception.UserAlreadyExistsException;
 import com.github.ahmed_zein.ecommerce_backend.exception.UserNotVerifiedException;
 import com.github.ahmed_zein.ecommerce_backend.model.LocalUser;
 import com.github.ahmed_zein.ecommerce_backend.model.VerificationToken;
@@ -35,10 +35,10 @@ public class UserService {
         this.verificationTokenDAO = verificationTokenDAO;
     }
 
-    public LocalUser registerUser(RegistrationBody registrationBody) throws UserAlreadyExists, EmailFailureException {
+    public void registerUser(RegistrationBody registrationBody) throws UserAlreadyExistsException, EmailFailureException {
 
         if (localUserDAO.existsByEmailIgnoreCase(registrationBody.getEmail()) || localUserDAO.existsByUsernameIgnoreCase(registrationBody.getUserName())) {
-            throw new UserAlreadyExists();
+            throw new UserAlreadyExistsException();
         }
         LocalUser user = new LocalUser();
         user.setUsername(registrationBody.getUserName());
@@ -49,7 +49,7 @@ public class UserService {
         VerificationToken verificationToken = createVerificationToken(user);
         emailService.sendVerificationEmail(verificationToken);
         verificationTokenDAO.save(verificationToken);
-        return localUserDAO.save(user);
+        localUserDAO.save(user);
     }
 
     public String loginUser(LoginBody loginBody) throws UserNotVerifiedException, EmailFailureException {
@@ -75,7 +75,7 @@ public class UserService {
     }
 
     @Transactional
-    public Boolean verifyEmail(String token) {
+    public Boolean verifyUser(String token) {
         Optional<VerificationToken> opToken = verificationTokenDAO.findByToken(token);
         if (opToken.isEmpty()) {
             return false;
