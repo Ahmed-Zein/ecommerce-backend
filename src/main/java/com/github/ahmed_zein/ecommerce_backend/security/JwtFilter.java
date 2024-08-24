@@ -1,30 +1,28 @@
 package com.github.ahmed_zein.ecommerce_backend.security;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Optional;
-
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.github.ahmed_zein.ecommerce_backend.model.LocalUser;
+import com.github.ahmed_zein.ecommerce_backend.model.dao.LocalUserDAO;
+import com.github.ahmed_zein.ecommerce_backend.service.JWTService;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.github.ahmed_zein.ecommerce_backend.model.LocalUser;
-import com.github.ahmed_zein.ecommerce_backend.model.dao.LocalUserDAO;
-import com.github.ahmed_zein.ecommerce_backend.service.JWTService;
-
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Optional;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-    public final JWTService jwtService;
-    public final LocalUserDAO localUserDAO;
+    private final JWTService jwtService;
+    private final LocalUserDAO localUserDAO;
 
     public JwtFilter(JWTService jwtService, LocalUserDAO localUserDAO) {
         this.jwtService = jwtService;
@@ -42,14 +40,15 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = header.substring(bearer.length());
         try {
             String username = jwtService.getUsername(token);
-            Iterable<LocalUser> users = localUserDAO.findAll();
-            users.forEach(System.out::println);
             Optional<LocalUser> opUser = localUserDAO.findByUsernameIgnoreCase(username);
             if (opUser.isEmpty()) {
                 filterChain.doFilter(request, response);
                 return;
             }
             LocalUser user = opUser.get();
+            if (!user.isEmailVerified()) {
+                return;
+            }
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);

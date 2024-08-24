@@ -23,6 +23,7 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests(
                 authorize -> authorize
                         .requestMatchers(
+                                "/error",
                                 "/products",
                                 "/auth/login",
                                 "/auth/register",

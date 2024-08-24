@@ -68,7 +68,7 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
-    @GetMapping("/ping")
+    @GetMapping("/me")
     public LocalUser ping(@AuthenticationPrincipal LocalUser user) {
         // LocalUser user = (LocalUser)
         // SecurityContextHolder.getContext().getAuthentication().getPrincipal();
