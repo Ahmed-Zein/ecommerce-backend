@@ -1,6 +1,7 @@
 package com.github.ahmed_zein.ecommerce_backend.service;
 
 import com.github.ahmed_zein.ecommerce_backend.exception.EmailFailureException;
+import com.github.ahmed_zein.ecommerce_backend.model.LocalUser;
 import com.github.ahmed_zein.ecommerce_backend.model.VerificationToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
@@ -40,5 +41,19 @@ public class EmailService {
         } catch (MailException e) {
             throw new EmailFailureException();
         }
+    }
+
+    public void sendPasswordRestEmail(String token, LocalUser user) throws EmailFailureException {
+        SimpleMailMessage simpleMailMessage = createEmailMessage();
+        simpleMailMessage.setTo(user.getEmail());
+        simpleMailMessage.setSubject("Verify your email to activate you account.");
+        simpleMailMessage.setText("Follow the link below to verify your account.\n"
+                + url + "/auth/verify/?token=" + token);
+        try {
+            javaMailSender.send(simpleMailMessage);
+        } catch (MailException e) {
+            throw new EmailFailureException();
+        }
+
     }
 }

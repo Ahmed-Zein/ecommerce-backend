@@ -1,20 +1,24 @@
 package com.github.ahmed_zein.ecommerce_backend.service;
 
+import java.sql.Timestamp;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.github.ahmed_zein.ecommerce_backend.api.model.LoginBody;
+import com.github.ahmed_zein.ecommerce_backend.api.model.PasswordResetBody;
 import com.github.ahmed_zein.ecommerce_backend.api.model.RegistrationBody;
 import com.github.ahmed_zein.ecommerce_backend.exception.EmailFailureException;
+import com.github.ahmed_zein.ecommerce_backend.exception.EmailNotFoundException;
 import com.github.ahmed_zein.ecommerce_backend.exception.UserAlreadyExistsException;
 import com.github.ahmed_zein.ecommerce_backend.exception.UserNotVerifiedException;
 import com.github.ahmed_zein.ecommerce_backend.model.LocalUser;
 import com.github.ahmed_zein.ecommerce_backend.model.VerificationToken;
 import com.github.ahmed_zein.ecommerce_backend.model.dao.LocalUserDAO;
 import com.github.ahmed_zein.ecommerce_backend.model.dao.VerificationTokenDAO;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.util.Optional;
+import jakarta.transaction.Transactional;
 
 @Service
 public class UserService {
@@ -26,8 +30,9 @@ public class UserService {
     private final VerificationTokenDAO verificationTokenDAO;
 
     @Autowired
-    public UserService(LocalUserDAO localUserDAO, EncryptionService encryptionService, EmailService emailService, JWTService jwtService,
-                       VerificationTokenDAO verificationTokenDAO) {
+    public UserService(LocalUserDAO localUserDAO, EncryptionService encryptionService, EmailService emailService,
+            JWTService jwtService,
+            VerificationTokenDAO verificationTokenDAO) {
         this.localUserDAO = localUserDAO;
         this.encryptionService = encryptionService;
         this.emailService = emailService;
@@ -35,9 +40,11 @@ public class UserService {
         this.verificationTokenDAO = verificationTokenDAO;
     }
 
-    public void registerUser(RegistrationBody registrationBody) throws UserAlreadyExistsException, EmailFailureException {
+    public void registerUser(RegistrationBody registrationBody)
+            throws UserAlreadyExistsException, EmailFailureException {
 
-        if (localUserDAO.existsByEmailIgnoreCase(registrationBody.getEmail()) || localUserDAO.existsByUsernameIgnoreCase(registrationBody.getUserName())) {
+        if (localUserDAO.existsByEmailIgnoreCase(registrationBody.getEmail())
+                || localUserDAO.existsByUsernameIgnoreCase(registrationBody.getUserName())) {
             throw new UserAlreadyExistsException();
         }
         LocalUser user = new LocalUser();
@@ -65,13 +72,35 @@ public class UserService {
             return jwtService.generateJWT(user);
         }
         boolean resend = user.getVerificationTokens().isEmpty() ||
-                user.getVerificationTokens().get(0).getCreatedTimeStamp().before(new Timestamp(System.currentTimeMillis() - (60 * 60 * 1000)));
+                user.getVerificationTokens().get(0).getCreatedTimeStamp()
+                        .before(new Timestamp(System.currentTimeMillis() - (60 * 60 * 1000)));
         if (resend) {
             VerificationToken verificationToken = createVerificationToken(user);
             verificationTokenDAO.save(verificationToken);
             emailService.sendVerificationEmail(verificationToken);
         }
         throw new UserNotVerifiedException(resend);
+    }
+
+    public void forgetPassword(String email) throws EmailNotFoundException, EmailFailureException {
+        var opUser = localUserDAO.findByEmailIgnoreCase(email);
+        if (opUser.isEmpty()) {
+            throw new EmailNotFoundException();
+        }
+        var user = opUser.get();
+        String token = jwtService.generatePasswordRestJWT(user);
+        emailService.sendPasswordRestEmail(token, user);
+    }
+
+    public void resetPassword(PasswordResetBody resetBody) throws EmailNotFoundException {
+        String email = jwtService.getEmail(resetBody.getToken());
+        var opUser = localUserDAO.findByEmailIgnoreCase(email);
+        if (opUser.isEmpty()) {
+            throw new EmailNotFoundException();
+        }
+        var user = opUser.get();
+        user.setPassword(encryptionService.hashPassword(resetBody.getPassword()));
+        localUserDAO.save(user);
     }
 
     @Transactional

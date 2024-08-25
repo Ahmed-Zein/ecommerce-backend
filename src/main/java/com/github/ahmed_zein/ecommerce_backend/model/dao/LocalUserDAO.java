@@ -11,4 +11,6 @@ public interface LocalUserDAO extends ListCrudRepository<LocalUser, Long> {
     boolean existsByUsernameIgnoreCase(String username);
 
     Optional<LocalUser> findByUsernameIgnoreCase(String username);
+
+    Optional<LocalUser> findByEmailIgnoreCase(String email);
 }
