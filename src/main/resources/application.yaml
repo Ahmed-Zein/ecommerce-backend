@@ -30,7 +30,7 @@ jwt:
   algorithm:
     key: "greybeast declares this secure"
   issuer: "greybeast"
-  expiryInSeconds: 600
+  expiryInSeconds: 86400 # 24hr
 
 app:
   frontend-url: "localhost:8000"
